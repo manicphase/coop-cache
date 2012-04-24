@@ -6,20 +6,17 @@
   <script type="text/javascript">
 	function hashops() {
 		messagehash = Sha1.hash(mess.message.value);
-		messagerehash = Sha1.hash(mess.message.value);
-		mess.mhash.value = messagehash;
-		mess.mrehash.value = Sha1.hash(messagehash);
-
 		passwordhash = Sha1.hash(login.password.value);
 		userhash = Sha1.hash(login.username.value);
-		mess.userid.value = userhash;
-		mess.passhash.value = passwordhash;
 
 		xs = messagehash + passwordhash;		
 		xsolution = Sha1.hash(xs);
 		xchallenge = Sha1.hash(xsolution);
-		mess.solution.value = xsolution;
+
 		mess.challenge.value = xchallenge;
+		mess.userid.value = userhash;
+		mess.mhash.value = messagehash;
+
 
 	}
 	</script>
@@ -37,13 +34,12 @@
     <li> <button type="button" onclick="hashops()">Generate hashes</button>
     </li>
 	<li> <label for="message">Userid</label> <input name="userid" id="userid" readonly="readonly" type="text"> </li>
-	<li> <label for="message">Password hash</label> <input name="passhash" id="passhash" readonly="readonly" type="text"> </li>
-	<br>
-    <li> <label for="message">Message hash</label> <input name="mhash" id="mhash" readonly="readonly" type="text"> </li>
-    <li> <label for="message">Rehashed message hash</label> <input name="mrehash" id="mrehash" readonly="readonly" type="text"> </li>
-	<br>
-	<li> <label for="message">Solution(passhash x messagehash)</label> <input name="solution" id="solution" readonly="readonly" type="text"> </li>
+        <li> <label for="message">Message hash</label> <input name="mhash" id="mhash" readonly="readonly" type="text"> </li>
 	<li> <label for="message">Challenge(hashed solution)</label> <input name="challenge" id="challenge" readonly="readonly" type="text"> </li>
+	<br>
+	<li> <form method="post" enctype="multipart/form-data" action="/">Post a
+		message to wall<input name="pc" id="pc" width="100%"><input value="Press" type="submit"> post message!
+	</form> </li>
   </ul>
   </fieldset>
 </form>

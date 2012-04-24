@@ -2,9 +2,20 @@
 
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 import Cookie
+import os
 from os import sep, curdir
 import cgi
 import hashlib
+
+def saveposttofile(postdata):
+    if not os.path.exists("cache"):
+        os.makedirs("cache")
+    if not os.path.exists("cache/posts"):
+        os.makedirs("cache/posts")
+    post = open("cache/posts/" + hashlib.sha224(postdata).hexdigest(), "w")
+    print postdata
+    post.write(postdata)
+    post.close()
 
 class MyHandler(BaseHTTPRequestHandler):
 
@@ -13,6 +24,8 @@ class MyHandler(BaseHTTPRequestHandler):
 
         if self.path.find("?") > 0:
             self.path, commands = self.path.split("?",1)
+            postitems = commands.replace("&","\n")
+            saveposttofile(postitems)
 
         if "Cookie" in self.headers:
             c = Cookie.SimpleCookie(self.headers["Cookie"])
@@ -23,7 +36,6 @@ class MyHandler(BaseHTTPRequestHandler):
             #self.wfile.write(cookie)
 
         if self.path.startswith("/wall"):
-            print "lol"
             f = open(curdir + sep + "res/postmessage.html")
             self.send_response(200)
             self.send_header('Content-type',	'text/html')
@@ -81,10 +93,7 @@ class MyHandler(BaseHTTPRequestHandler):
             postdata = postdata +'next post key = ' + nextkey
 
             #save file
-            post = open("cache/posts/" + hashlib.sha224(postdata).hexdigest(), "w")
-            print postdata
-            post.write(postdata)
-            post.close()
+
 
             print "done"
 
