@@ -1,0 +1,13 @@
+Coop Cache is a project which aims to create a resilient, scalable and user friendly peer-to-peer social network platform written in python.
+
+The software should eventually be able to work on a variety of webservers. More importantly there will be a simple no setup client side application which will act as a bridge/node in the Coop Cache network. Users will be donating bandwidth and disk space in order for you and your friends to share information quickly and without the requirement to be always online.
+
+In order to get a solid working system we aim to start small with the goal on getting small text files reliably hosted within the distributed network. Think Twitter meets bit-torrent.
+
+Initial goals:
+
+*Use a client (web-browser) side hashing algorithm to create a system of using passwords to verify user accounts to avoid the risk of harmful nodes hijacking user accounts. Currently we're experimenting with Chris Veness' Browser based SHA-1 hashing algorithm to do this. (http://www.movable-type.co.uk/scripts/sha1.html)
+
+*Use the kademlia algorithm (http://en.wikipedia.org/wiki/Kademlia) to efficiently place and find files and users within the network.
+
+*Create a scalable system to track when posts are made. This will be similar to the block system Bitcoin uses, except rather than be limited on the amount of "transactions" which could be made every ten or so minutes due to file size. Our system will exploit the kademlia system to automatically split the network into several logs during times of high use. Check point cryptographic hashes will be passed between the logs to confirm validity.
