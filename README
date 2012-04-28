@@ -11,3 +11,7 @@ Initial goals:
 *Use the kademlia algorithm (http://en.wikipedia.org/wiki/Kademlia) to efficiently place and find files and users within the network.
 
 *Create a scalable system to track when posts are made. This will be similar to the block system Bitcoin uses, except rather than be limited on the amount of "transactions" which could be made every ten or so minutes due to file size. Our system will exploit the kademlia system to automatically split the network into several logs during times of high use. Check point cryptographic hashes will be passed between the logs to confirm validity.
+
+Current Status. 
+
+The current release doesn't really do much at all. Feel free to experiment with the code.

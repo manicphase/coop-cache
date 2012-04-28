@@ -8,24 +8,30 @@ import cgi
 import hashlib
 
 def saveposttofile(postdata):
+    userid = getusername(postdata)
     if not os.path.exists("cache"):
         os.makedirs("cache")
     if not os.path.exists("cache/posts"):
         os.makedirs("cache/posts")
-    post = open("cache/posts/" + hashlib.sha224(postdata).hexdigest(), "w")
-    print postdata
+    if not os.path.exists("cache/posts/"+userid):
+        os.makedirs("cache/posts/"+userid)
+    post = open("cache/posts/"+userid+"/" + hashlib.sha224(postdata).hexdigest(), "w")
     post.write(postdata)
     post.close()
+
+def getusername(postdata):
+    dict = {};
+    postdata = postdata.split("\n")
+    for line in postdata:
+        nline = line.split("=",1)
+        dict[nline[0]] = nline[1]
+    return dict["userid"]
+
 
 class MyHandler(BaseHTTPRequestHandler):
 
     def do_GET(self):
         print "getting"
-
-        if self.path.find("?") > 0:
-            self.path, commands = self.path.split("?",1)
-            postitems = commands.replace("&","\n")
-            saveposttofile(postitems)
 
         if "Cookie" in self.headers:
             c = Cookie.SimpleCookie(self.headers["Cookie"])
@@ -34,6 +40,11 @@ class MyHandler(BaseHTTPRequestHandler):
             #self.send_header('Content-type',	'text/html')
             #self.end_headers()
             #self.wfile.write(cookie)
+
+        if self.path.find("?") > 0:
+            self.path, commands = self.path.split("?",1)
+            postitems = commands.replace("&","\n")
+            saveposttofile(postitems)
 
         if self.path.startswith("/wall"):
             f = open(curdir + sep + "res/postmessage.html")
@@ -99,12 +110,12 @@ class MyHandler(BaseHTTPRequestHandler):
 
         if (createusername):
             print createusername[0]
-            newuserhash = hashlib.sha224(createusername[0]).hexdigest()
+            newuserhash = hashlib.sha1(createusername[0]).hexdigest()
             self.send_response(200)
             self.send_header('Content-type',	'text/html')
             self.send_header('Set-Cookie','userid='+newuserhash+'; Expires=Tue, 23-Dec-2012 00:00:00 GMT')
             self.send_header('Set-Cookie','username='+createusername[0]+'; Expires=Tue, 23-Dec-2012 00:00:00 GMT')
-            self.send_header('Set-Cookie','pwhash='+hashlib.sha224(createusername[1]).hexdigest()+'; Expires=Tue, 23-Dec-2012 00:00:00 GMT')
+            self.send_header('Set-Cookie','pwhash='+hashlib.sha1(createusername[1]).hexdigest()+'; Expires=Tue, 23-Dec-2012 00:00:00 GMT')
             self.end_headers()
             self.wfile.write('<script type="text/javascript">self.location="/";</script>')
             print newuserhash
