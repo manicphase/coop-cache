@@ -2,23 +2,23 @@ from hashlib import sha256 as SHA256
 import M2Crypto
 import os
 
-class CreateUser():
-    def __init__(self, username, password=None):
-        self.key = M2Crypto.RSA.gen_key(1024, 65537)
-        try:
-            os.mkdir("local_keys")
-        except:
-            pass
-        self.key.save_key("local_keys/"+username+'-private.pem', None)
-        self.key.save_pub_key("local_keys/"+username+"-public.pem")
-        print("new key generated")
+def CreateUser(username, password=None):
+    key = M2Crypto.RSA.gen_key(1024, 65537)
+    try:
+        os.mkdir("local_keys")
+    except:
+        pass
+    key.save_key("local_keys/"+username+'-private.pem', None)
+    key.save_pub_key("local_keys/"+username+"-public.pem")
+    print("new key generated")
+    return SHA256(open("local_keys/"+username+"-public.pem").read()).hexdigest()
         
 class CryptoStuff():
     def __init__(self, username):
         M2Crypto.Rand.rand_seed(os.urandom(1024))
-        self.key = M2Crypto.EVP.load_key(username+'-private.pem')
+        self.key = M2Crypto.EVP.load_key("local_keys/"+username+'-private.pem')
         print("loaded key from file")
-        with open(username+"-public.pem") as f:
+        with open("local_keys/"+username+"-public.pem") as f:
             self.pub_key = f.read()            
             
     def public_key(self):

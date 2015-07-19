@@ -40,17 +40,36 @@ def create_user():
         elif request.method == "POST":
             username = request.form["username"]
             password = request.form["password"]
-            passhash = SHA256(password).hexdigest()
+            passhash = SHA256(password+username).hexdigest()
+            config.read('sessions.cfg')
+            #if username and pass are good, just set the session id
+            if passhash in config.sections():
+                resp = make_response(redirect("/", code=302))
+                resp.set_cookie("session", passhash)
+                return resp
+
+            #if username exists but doesn't match password, return an error            
+            if passhash not in config.sections():
+                for section in config.sections():
+                    if config.get(section, "username") == username:
+                        return "This is the wrong password for this username"
+                        
+            #else create a new user
             config.add_section(passhash)
             config.set(passhash, "username", username)
             config.set(passhash, "password", password)
-            key_stuff.CreateUser(username)
+            config.set(passhash, "pubkeyhash", key_stuff.CreateUser(username))
             with open('sessions.cfg', 'wb') as configfile:
                 config.write(configfile)
                 
             resp = make_response(redirect("/", code=302))
             resp.set_cookie("session", passhash)
-            return resp           
+            
+            #update local keys for new user
+            get_local_keys()
+            
+            return resp
+            
     return "Only local users may create accounts"
 
 @app.route("/public_key")
