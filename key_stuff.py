@@ -2,20 +2,24 @@ from hashlib import sha256 as SHA256
 import M2Crypto
 import os
 
-
-class CryptoStuff():
-    def __init__(self):
-        M2Crypto.Rand.rand_seed(os.urandom(1024))
+class CreateUser():
+    def __init__(self, username, password=None):
+        self.key = M2Crypto.RSA.gen_key(1024, 65537)
         try:
-            self.key = M2Crypto.EVP.load_key('key-private.pem')
-            print("loaded key from file")
+            os.mkdir("local_keys")
         except:
-            self.key = M2Crypto.RSA.gen_key(1024, 65537)
-            self.key.save_key('key-private.pem', None)
-            self.key.save_pub_key("key-public.pem")
-            print("new key generated")
-        with open("key-public.pem") as f:
-            self.pub_key = f.read()
+            pass
+        self.key.save_key("local_keys/"+username+'-private.pem', None)
+        self.key.save_pub_key("local_keys/"+username+"-public.pem")
+        print("new key generated")
+        
+class CryptoStuff():
+    def __init__(self, username):
+        M2Crypto.Rand.rand_seed(os.urandom(1024))
+        self.key = M2Crypto.EVP.load_key(username+'-private.pem')
+        print("loaded key from file")
+        with open(username+"-public.pem") as f:
+            self.pub_key = f.read()            
             
     def public_key(self):
         return self.pub_key
@@ -41,14 +45,14 @@ class CryptoStuff():
         pubkey.verify_update(message)
         return pubkey.verify_final(signature.decode("base64")) == 1
         
-        
-cs = CryptoStuff()
-checksum, signature = cs.send_public("i am also message")
-wrong_checksum, wrong_signature = cs.send_public("i am wrong message")
+if __name__ == "__main__":
+    cs = CryptoStuff()
+    checksum, signature = cs.send_public("i am also message")
+    wrong_checksum, wrong_signature = cs.send_public("i am wrong message")
 
-pub_key = cs.public_key()
+    pub_key = cs.public_key()
 
-print("checksum: " + checksum)
-print("signature: " + signature)
+    print("checksum: " + checksum)
+    print("signature: " + signature)
 
-print(cs.verify_public(checksum, signature, pub_key))
+    print(cs.verify_public(checksum, signature, pub_key))
