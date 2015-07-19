@@ -6,12 +6,10 @@ In order to get a solid working system we aim to start small with the goal on ge
 
 Initial goals:
 
-*Use a client (web-browser) side hashing algorithm to create a system of using passwords to verify user accounts to avoid the risk of harmful nodes hijacking user accounts. Currently we're experimenting with Chris Veness' Browser based SHA-1 hashing algorithm to do this. (http://www.movable-type.co.uk/scripts/sha1.html)
-
 *Use the kademlia algorithm (http://en.wikipedia.org/wiki/Kademlia) to efficiently place and find files and users within the network.
 
 *Create a scalable system to track when posts are made. This will be similar to the block system Bitcoin uses, except rather than be limited on the amount of "transactions" which could be made every ten or so minutes due to file size. Our system will exploit the kademlia system to automatically split the network into several logs during times of high use. Check point cryptographic hashes will be passed between the logs to confirm validity.
 
 Current Status. 
 
-The current release doesn't really do much at all. Feel free to experiment with the code.
+Back from the dead after not being touched for three years. I now know more about cryptography and stuff. At current this still doesn't do much, but is being designed and built in a far better way than before.
